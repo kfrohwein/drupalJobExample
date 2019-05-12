@@ -1,0 +1,6 @@
+name: Job Form
+description: Adds a block with a form and saves the data to an entity.
+package: Custom
+type: module
+version: 1.0
+core: 8.x
