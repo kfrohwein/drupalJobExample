@@ -12,32 +12,23 @@
   </IfModule>
 </FilesMatch>
 
+# HTTP Auth
+AuthType Basic
+AuthName "Restricted"
+AuthBasicProvider file
+AuthUserFile "/kunden/homepages/3/d558403055/htdocs/drupalJobsDemo/web/.htpasswd"
+Require user DrupalDemo
+
+
 # Don't show directory listings for URLs which map to a directory.
 Options -Indexes
 
 # Set the default handler.
-DirectoryIndex index.php index.html index.htm
+DirectoryIndex index.php
 
 # Add correct encoding for SVGZ.
 AddType image/svg+xml svg svgz
 AddEncoding gzip svgz
-
-# Most of the following PHP settings cannot be changed at runtime. See
-# sites/default/default.settings.php and
-# Drupal\Core\DrupalKernel::bootEnvironment() for settings that can be
-# changed at runtime.
-
-# PHP 5, Apache 1 and 2.
-<IfModule mod_php5.c>
-  php_value assert.active                   0
-  php_flag session.auto_start               off
-  php_value mbstring.http_input             pass
-  php_value mbstring.http_output            pass
-  php_flag mbstring.encoding_translation    off
-  # PHP 5.6 has deprecated $HTTP_RAW_POST_DATA and produces warnings if this is
-  # not set.
-  php_value always_populate_raw_post_data   -1
-</IfModule>
 
 # Requires mod_expires to be enabled.
 <IfModule mod_expires.c>
@@ -154,30 +145,6 @@ AddEncoding gzip svgz
   # Specifically, disallow autoload.php from being served directly.
   RewriteRule "^(.+/.*|autoload)\.php($|/)" - [F]
 
-  # Rules to correctly serve gzip compressed CSS and JS files.
-  # Requires both mod_rewrite and mod_headers to be enabled.
-  <IfModule mod_headers.c>
-    # Serve gzip compressed CSS files if they exist and the client accepts gzip.
-    RewriteCond %{HTTP:Accept-encoding} gzip
-    RewriteCond %{REQUEST_FILENAME}\.gz -s
-    RewriteRule ^(.*)\.css $1\.css\.gz [QSA]
-
-    # Serve gzip compressed JS files if they exist and the client accepts gzip.
-    RewriteCond %{HTTP:Accept-encoding} gzip
-    RewriteCond %{REQUEST_FILENAME}\.gz -s
-    RewriteRule ^(.*)\.js $1\.js\.gz [QSA]
-
-    # Serve correct content types, and prevent mod_deflate double gzip.
-    RewriteRule \.css\.gz$ - [T=text/css,E=no-gzip:1]
-    RewriteRule \.js\.gz$ - [T=text/javascript,E=no-gzip:1]
-
-    <FilesMatch "(\.js\.gz|\.css\.gz)$">
-      # Serve correct encoding type.
-      Header set Content-Encoding gzip
-      # Force proxies to cache gzipped & non-gzipped css/js files separately.
-      Header append Vary Accept-Encoding
-    </FilesMatch>
-  </IfModule>
 </IfModule>
 
 # Various header fixes.
